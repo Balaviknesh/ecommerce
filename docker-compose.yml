@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  pgdb:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_PASSWORD: ecompostgres
+    restart: always
+
+  api:
+    depends_on:
+      - pgdb
+    image: ecommerce:latest
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pgdb:5432/ecommerce
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ecompostgres
+    ports:
+      - "8080:8080"
+    restart: always

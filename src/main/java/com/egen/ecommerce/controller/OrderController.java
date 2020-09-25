@@ -38,8 +38,6 @@ public class OrderController {
     }
 
     @PostMapping("/createOrder")
-    public boolean order_create(@RequestBody Order order){
-        return orderService.createOrder(order);
-    }
+    public boolean order_create(@RequestBody Order order){ return orderService.createOrder(order); }
 
 }

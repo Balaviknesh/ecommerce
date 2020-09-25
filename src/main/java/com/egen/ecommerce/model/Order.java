@@ -7,7 +7,6 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "cus_order")
-
 public class Order {
 
     @Id

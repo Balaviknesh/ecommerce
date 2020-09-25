@@ -1,5 +1,7 @@
 package com.egen.ecommerce.service;
 
+import com.egen.ecommerce.exception.BadRequestException;
+import com.egen.ecommerce.exception.NotFoundException;
 import com.egen.ecommerce.model.Order;
 import com.egen.ecommerce.repo.OrderRepository;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,11 @@ public class DefaultOrderService implements OrderService{
 
 
         if (!order.isPresent())
-            return "Record Not Found";
+            throw new NotFoundException("Order with the id:" + order_id + " doesn't exist.");
 
         Order order_out = order.get();
 
         char status = order_out.getOrder_status();
-
 
         switch (status){
 
@@ -61,13 +62,15 @@ public class DefaultOrderService implements OrderService{
 
         }
 
-
     }
 
     @Override
     public Order getOrderByID(String order_id) {
 
         Optional<Order> op_order = orderRepository.findById(order_id);
+        if (!op_order.isPresent())
+            throw new NotFoundException("Order with the id:" + order_id + " doesn't exist.");
+
         return op_order.orElse(null);
     }
 
@@ -77,7 +80,7 @@ public class DefaultOrderService implements OrderService{
         Optional<Order> order = orderRepository.findById(order_id);
 
         if (!order.isPresent())
-            return "Record Not Found";
+            throw new NotFoundException("Order with the id:" + order_id + " doesn't exist.");
 
         Order updatedOrder = new Order();
         updatedOrder.setOrder_id(order_id);
@@ -90,9 +93,13 @@ public class DefaultOrderService implements OrderService{
 
     @Override
     public boolean createOrder(Order order) {
+        if(order.getOrderDetails().isEmpty())
+            throw new BadRequestException("Order doesnt have any items. Please add items to create order");
+        if(order.getShipping_address() == null)
+            throw new BadRequestException("Order doesnt have any items. Please add items to create order");
+
         orderRepository.save(order);
         return true;
     }
-
 
 }
